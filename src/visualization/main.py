@@ -1,17 +1,15 @@
 import sys
 sys.path.append('..') 
 
-# Importations
+# Imports
+from collections import defaultdict
+from collections import  Counter
+import matplotlib.pyplot as plt
+from nltk.corpus import stopwords
 import plotly.express as px
 from plotly.subplots import make_subplots
 import plotly.graph_objects as go
 import seaborn as sns
-import matplotlib.pyplot as plt
-from nltk.corpus import stopwords
-from collections import defaultdict
-from collections import  Counter
-from wordcloud import WordCloud
-
 from src.data.make_dataset import (
   get_dataset, 
   create_corpus, 
@@ -20,6 +18,7 @@ from src.data.make_dataset import (
   get_top_keywords,
   get_top_locations
 )
+from wordcloud import WordCloud
 
 plt.style.use('ggplot')
 stop=set([
@@ -56,8 +55,8 @@ def plot_disaster_and_non_disaster_bar_distribution(raw: bool = True) -> None:
 
   # Plot the distribution for the train set
   fig = px.bar(train_distribution, x='target', y='count', barmode='group',
-              labels={'target': 'Disaster Tweet', 'count': 'Number of Tweets'},
-              title='Distribution of Disaster and Non-Disaster Tweets in Train Set')
+              labels={'target': 'Disaster Tweets', 'count': 'Number of Tweets'},
+              title='Distribution of Disaster and Non-Disaster Tweets in the training Set')
   fig.show()
   
 def plot_disaster_and_non_disaster_pie_distribution(raw: bool = True) -> None:
@@ -75,7 +74,7 @@ def plot_disaster_and_non_disaster_pie_distribution(raw: bool = True) -> None:
   # Distribution of disaster and non-disaster tweets in the train set as a pie chart
   fig_pie = px.pie(train_distribution, values='count', names='target',
                   labels={'target': 'Disaster Tweet'},
-                  title='Percentage of Disaster and Non-Disaster Tweets in Train Set')
+                  title='Percentage of Disaster and Non-Disaster Tweets in the training Set')
   fig_pie.show()
   
 def plot_tweet_length_histogram(raw: bool = True) -> None:
@@ -432,7 +431,7 @@ def plot_most_common_locations(raw: bool = True, top: int = 10) -> None:
   fig.add_trace(go.Bar(x=y_disaster_loc, y=x_disaster_loc, orientation='h', name='Disaster', marker_color='orange'), row=1, col=2)
 
   # Update layout
-  fig.update_layout(title_text=f'Top {top} Locations in Tweets',
+  fig.update_layout(title_text=f'Top {top} common locations in Tweets',
                     xaxis_title='Count',
                     yaxis_title='Locations',
                     showlegend=False)

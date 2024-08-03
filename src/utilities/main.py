@@ -1,6 +1,11 @@
-import re
-import string
+import nltk
+from nltk.corpus import stopwords
 from spellchecker import SpellChecker
+import string
+import re
+
+
+nltk.download('stopwords')
 
 
 spell = SpellChecker()
@@ -39,3 +44,9 @@ def correct_spellings(text):
         corrected_word = spell.correction(word) if word in misspelled_words else word
         corrected_text.append(corrected_word if corrected_word is not None else "")
     return " ".join(corrected_text)  
+  
+
+def remove_stopwords(text):
+  text = text.lower()
+  text = " ".join([word for word in text.split() if word not in stopwords.words('english')])
+  return text

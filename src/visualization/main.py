@@ -22,7 +22,24 @@ from src.data.make_dataset import (
 )
 
 plt.style.use('ggplot')
-stop=set(stopwords.words('english'))
+stop=set([
+  "one", 
+  "new", 
+  "go", 
+  "see", 
+  "say", 
+  "know", 
+  "come", 
+  "think", 
+  "make", 
+  "want",
+  "new", 
+  "via",
+  "s",
+  "u",
+  "news",
+  "rt"
+  ] + stopwords.words('english'))
 
 
 def plot_disaster_and_non_disaster_bar_distribution(raw: bool = True) -> None:
@@ -70,7 +87,7 @@ def plot_tweet_length_histogram(raw: bool = True) -> None:
   """
   train, _ = get_dataset(raw)
   # Histogram of tweet lengths for disaster and non-disaster tweets
-  train['text_length'] = train['text'].apply(len)
+  train['text_length'] = train['text'].apply(lambda x: len(x) if isinstance(x, str) else 0)
 
   # Separate the data into disaster and non-disaster tweets
   disaster_tweets = train[train['target'] == 1]
@@ -104,7 +121,7 @@ def plot_tweet_word_length_histogram(raw: bool = True) -> None:
   """
   train, _ = get_dataset(raw)
   # Histogram of word lengths for disaster and non-disaster tweets
-  train['word_length'] = train['text'].apply(lambda x: len(x.split()))
+  train['word_length'] = train['text'].apply(lambda x: len(x.split()) if isinstance(x, str) else 0)
 
   # Separate the data into disaster and non-disaster tweets
   disaster_tweets_word = train[train['target'] == 1]
@@ -138,7 +155,9 @@ def plot_average_word_length_for_each_tweet_histogram(raw: bool = True) -> None:
   """
   train, _ = get_dataset(raw)
   # Calculate the average word length for each tweet
-  train['avg_word_length'] = train['text'].apply(lambda x: sum(len(word) for word in x.split()) / len(x.split()))
+  train['avg_word_length'] = train['text'].apply(
+      lambda x: sum(len(word) for word in x.split()) / len(x.split()) if isinstance(x, str) and x.split() else 0
+  )
 
   # Separate the data into disaster and non-disaster tweets
   disaster_tweets_avg_word = train[train['target'] == 1]['avg_word_length']
@@ -216,131 +235,131 @@ def plot_most_common_stopwords(raw: bool = True, top: int = 10) -> None:
   fig.show()
 
 def plot_most_common_words(raw: bool = True, top: int = 10) -> None:
-  """
-  Plots the top 'top' common words in tweets (excluding stopwords).
+    """
+    Plots the top 'top' common words in tweets (excluding stopwords).
 
-  Parameters:
-  raw (bool): If True, uses the raw dataset. Otherwise, uses the processed dataset.
-  top (int): The number of top words to plot.
-  """
-  # Create corpus for non-disaster tweets
-  non_disaster_corpus = create_corpus(disaster=False, raw=raw)
-  disaster_corpus = create_corpus(disaster=True, raw=raw)
+    Parameters:
+    raw (bool): If True, uses the raw dataset. Otherwise, uses the processed dataset.
+    top (int): The number of top words to plot.
+    """
+    # Create corpus for non-disaster tweets
+    non_disaster_corpus = create_corpus(disaster=False, raw=raw)
+    disaster_corpus = create_corpus(disaster=True, raw=raw)
+    
+    # Count most common words in non-disaster tweets
+    counter_non_disaster = Counter(non_disaster_corpus) if non_disaster_corpus else Counter()
+    most_non_disaster = counter_non_disaster.most_common()
+    x_non_disaster = []
+    y_non_disaster = []
+    for word, count in most_non_disaster[:top]:
+        if word not in stop:
+            x_non_disaster.append(word)
+            y_non_disaster.append(count)
+
+    # Count most common words in disaster tweets
+    counter_disaster = Counter(disaster_corpus) if disaster_corpus else Counter()
+    most_disaster = counter_disaster.most_common()
+    x_disaster = []
+    y_disaster = []
+    for word, count in most_disaster[:top]:
+        if word not in stop:
+            x_disaster.append(word)
+            y_disaster.append(count)
+
+    # Create subplots
+    fig = make_subplots(rows=1, cols=2, subplot_titles=('Non-Disaster Tweets', 'Disaster Tweets'))
+
+    # Add bar chart for non-disaster tweets
+    fig.add_trace(go.Bar(x=y_non_disaster, y=x_non_disaster, orientation='h', name='Non-Disaster', marker_color='green'), row=1, col=1)
+
+    # Add bar chart for disaster tweets
+    fig.add_trace(go.Bar(x=y_disaster, y=x_disaster, orientation='h', name='Disaster', marker_color='red'), row=1, col=2)
+
+    # Update layout
+    fig.update_layout(title_text=f'Top {top} Common Words in Tweets (Excluding Stopwords)',
+                      xaxis_title='Count',
+                      yaxis_title='Words',
+                      showlegend=False)
+
+    fig.show()
+
+def plot_most_common_bigrams(raw: bool = True, top: int = 10) -> None:
+    """
+    Plots the top 'top' bigrams in tweets.
+
+    Parameters:
+    raw (bool): If True, uses the raw dataset. Otherwise, uses the processed dataset.
+    top (int): The number of top bigrams to plot.
+    """
+    train, _ = get_dataset(raw)
+    
+    # Create corpus for disaster and non-disaster tweets, filtering out NaN values
+    non_disaster_corpus = train[train['target'] == 0]['text'].dropna()
+    disaster_corpus = train[train['target'] == 1]['text'].dropna()
+
+    # Get top bigrams, handling empty corpus
+    top_non_disaster_bigrams = get_top_tweet_bigrams(non_disaster_corpus, top=top) if not non_disaster_corpus.empty else []
+    top_disaster_bigrams = get_top_tweet_bigrams(disaster_corpus, top=top) if not disaster_corpus.empty else []
+
+    # Prepare data for plotting
+    x_non_disaster, y_non_disaster = map(list, zip(*top_non_disaster_bigrams)) if top_non_disaster_bigrams else ([], [])
+    x_disaster, y_disaster = map(list, zip(*top_disaster_bigrams)) if top_disaster_bigrams else ([], [])
+
+    # Create subplots
+    fig = make_subplots(rows=1, cols=2, subplot_titles=('Non-Disaster Tweets', 'Disaster Tweets'))
+
+    # Add bar chart for non-disaster tweets
+    fig.add_trace(go.Bar(x=y_non_disaster, y=x_non_disaster, orientation='h', name='Non-Disaster', marker_color='green'), row=1, col=1)
+
+    # Add bar chart for disaster tweets
+    fig.add_trace(go.Bar(x=y_disaster, y=x_disaster, orientation='h', name='Disaster', marker_color='red'), row=1, col=2)
+
+    # Update layout
+    fig.update_layout(title_text=f'Top {top} Bigrams in Tweets',
+                      xaxis_title='Count',
+                      yaxis_title='Bigrams',
+                      showlegend=False)
+
+    fig.show()
   
-  # Count most common words in non-disaster tweets
-  counter_non_disaster = Counter(non_disaster_corpus)
-  most_non_disaster = counter_non_disaster.most_common()
-  x_non_disaster = []
-  y_non_disaster = []
-  for word, count in most_non_disaster[:top]:
-      if word not in stop:
-          x_non_disaster.append(word)
-          y_non_disaster.append(count)
+def plot_most_common_trigrams(raw: bool = True, top: int = 10) -> None:
+    """
+    Plots the top 'top' trigrams in tweets.
 
-  # Count most common words in disaster tweets
-  counter_disaster = Counter(disaster_corpus)
-  most_disaster = counter_disaster.most_common()
-  x_disaster = []
-  y_disaster = []
-  for word, count in most_disaster[:top]:
-      if word not in stop:
-          x_disaster.append(word)
-          y_disaster.append(count)
+    Parameters:
+    raw (bool): If True, uses the raw dataset. Otherwise, uses the processed dataset.
+    top (int): The number of top trigrams to plot.
+    """
+    train, _ = get_dataset(raw)
+    
+    # Create corpus for disaster and non-disaster tweets
+    non_disaster_corpus = train[train['target'] == 0]['text']
+    disaster_corpus = train[train['target'] == 1]['text']
 
-  # Create subplots
-  fig = make_subplots(rows=1, cols=2, subplot_titles=('Non-Disaster Tweets', 'Disaster Tweets'))
+    # Get top trigrams, handling empty corpus
+    top_non_disaster_trigrams = get_top_tweet_trigrams(non_disaster_corpus[non_disaster_corpus.apply(lambda x: isinstance(x, str))], top=top) if not non_disaster_corpus.empty else []
+    top_disaster_trigrams = get_top_tweet_trigrams(disaster_corpus[disaster_corpus.apply(lambda x: isinstance(x, str))], top=top) if not disaster_corpus.empty else []
 
-  # Add bar chart for non-disaster tweets
-  fig.add_trace(go.Bar(x=y_non_disaster, y=x_non_disaster, orientation='h', name='Non-Disaster', marker_color='green'), row=1, col=1)
+    # Prepare data for plotting
+    x_non_disaster_tri, y_non_disaster_tri = map(list, zip(*top_non_disaster_trigrams)) if top_non_disaster_trigrams else ([], [])
+    x_disaster_tri, y_disaster_tri = map(list, zip(*top_disaster_trigrams)) if top_disaster_trigrams else ([], [])
 
-  # Add bar chart for disaster tweets
-  fig.add_trace(go.Bar(x=y_disaster, y=x_disaster, orientation='h', name='Disaster', marker_color='red'), row=1, col=2)
+    # Create subplots
+    fig = make_subplots(rows=1, cols=2, subplot_titles=('Non-Disaster Tweets', 'Disaster Tweets'))
 
-  # Update layout
-  fig.update_layout(title_text=f'Top {top} Common Words in Tweets (Excluding Stopwords)',
-                    xaxis_title='Count',
-                    yaxis_title='Words',
-                    showlegend=False)
+    # Add bar chart for non-disaster tweets
+    fig.add_trace(go.Bar(x=y_non_disaster_tri, y=x_non_disaster_tri, orientation='h', name='Non-Disaster', marker_color='blue'), row=1, col=1)
 
-  fig.show()
+    # Add bar chart for disaster tweets
+    fig.add_trace(go.Bar(x=y_disaster_tri, y=x_disaster_tri, orientation='h', name='Disaster', marker_color='orange'), row=1, col=2)
 
-def plost_most_common_bigrams(raw: bool = True, top: int = 10) -> None:
-  """
-  Plots the top 'top' bigrams in tweets.
+    # Update layout
+    fig.update_layout(title_text=f'Top {top} Trigrams in Tweets',
+                      xaxis_title='Count',
+                      yaxis_title='Trigrams',
+                      showlegend=False)
 
-  Parameters:
-  raw (bool): If True, uses the raw dataset. Otherwise, uses the processed dataset.
-  top (int): The number of top bigrams to plot.
-  """
-  train, _ = get_dataset(raw)
-  
-  # Create corpus for disaster and non-disaster tweets
-  non_disaster_corpus = train[train['target'] == 0]['text']
-  disaster_corpus = train[train['target'] == 1]['text']
-
-  # Get top bigrams
-  top_non_disaster_bigrams = get_top_tweet_bigrams(non_disaster_corpus, top=top)
-  top_disaster_bigrams = get_top_tweet_bigrams(disaster_corpus, top=top)
-
-  # Prepare data for plotting
-  x_non_disaster, y_non_disaster = map(list, zip(*top_non_disaster_bigrams))
-  x_disaster, y_disaster = map(list, zip(*top_disaster_bigrams))
-
-  # Create subplots
-  fig = make_subplots(rows=1, cols=2, subplot_titles=('Non-Disaster Tweets', 'Disaster Tweets'))
-
-  # Add bar chart for non-disaster tweets
-  fig.add_trace(go.Bar(x=y_non_disaster, y=x_non_disaster, orientation='h', name='Non-Disaster', marker_color='green'), row=1, col=1)
-
-  # Add bar chart for disaster tweets
-  fig.add_trace(go.Bar(x=y_disaster, y=x_disaster, orientation='h', name='Disaster', marker_color='red'), row=1, col=2)
-
-  # Update layout
-  fig.update_layout(title_text=f'Top {top} Bigrams in Tweets',
-                    xaxis_title='Count',
-                    yaxis_title='Bigrams',
-                    showlegend=False)
-
-  fig.show()
-  
-def plost_most_common_trigrams(raw: bool = True, top: int = 10) -> None:
-  """
-  Plots the top 'top' trigrams in tweets.
-
-  Parameters:
-  raw (bool): If True, uses the raw dataset. Otherwise, uses the processed dataset.
-  top (int): The number of top trigrams to plot.
-  """
-  train, _ = get_dataset(raw)
-  
-  # Create corpus for disaster and non-disaster tweets
-  non_disaster_corpus = train[train['target'] == 0]['text']
-  disaster_corpus = train[train['target'] == 1]['text']
-
-  # Get top trigrams
-  top_non_disaster_trigrams = get_top_tweet_trigrams(non_disaster_corpus, top=top)
-  top_disaster_trigrams = get_top_tweet_trigrams(disaster_corpus, top=top)
-
-  # Prepare data for plotting
-  x_non_disaster_tri, y_non_disaster_tri = map(list, zip(*top_non_disaster_trigrams))
-  x_disaster_tri, y_disaster_tri = map(list, zip(*top_disaster_trigrams))
-
-  # Create subplots
-  fig = make_subplots(rows=1, cols=2, subplot_titles=('Non-Disaster Tweets', 'Disaster Tweets'))
-
-  # Add bar chart for non-disaster tweets
-  fig.add_trace(go.Bar(x=y_non_disaster_tri, y=x_non_disaster_tri, orientation='h', name='Non-Disaster', marker_color='blue'), row=1, col=1)
-
-  # Add bar chart for disaster tweets
-  fig.add_trace(go.Bar(x=y_disaster_tri, y=x_disaster_tri, orientation='h', name='Disaster', marker_color='orange'), row=1, col=2)
-
-  # Update layout
-  fig.update_layout(title_text=f'Top {top} Trigrams in Tweets',
-                    xaxis_title='Count',
-                    yaxis_title='Trigrams',
-                    showlegend=False)
-
-  fig.show()
+    fig.show()
 
 def plot_most_common_keywords(raw: bool = True, top: int = 10) -> None:
   """

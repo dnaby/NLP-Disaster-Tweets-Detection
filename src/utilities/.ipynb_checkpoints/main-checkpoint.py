@@ -4,12 +4,9 @@ from spellchecker import SpellChecker
 from unidecode import unidecode
 from nltk.stem import PorterStemmer
 import contractions
-import spacy
-from nltk.corpus import stopwords
 
 
 spell = SpellChecker()
-nlp = spacy.load("en_core_web_sm")
 
 def remove_URL(text: str) -> str:
     """
@@ -206,55 +203,3 @@ def remove_ampersand(text: str) -> str:
     if not isinstance(text, str):
         return text  # Return the original value if it's not a string
     return text.replace('amp', '')  # Remove &amp; entirely
-  
-def lemmatize_text(text: str) -> str:
-    """
-    Lemmatizes the given text using the Spacy library.
-
-    Parameters:
-    text (str): The text to be lemmatized.
-
-    Returns:
-    str: The lemmatized text.
-    """
-    if not isinstance(text, str):
-        return text  # Return the original value if it's not a string
-    doc = nlp(text)
-    lemmatized_text = ' '.join([token.lemma_ for token in doc])
-    return lemmatized_text
-
-def remove_stop_words(text: str) -> str:
-    """
-    Removes stop words from the given text.
-
-    Parameters:
-    text (str): The text from which stop words will be removed.
-
-    Returns:
-    str: The text with stop words removed.
-    """
-    if not isinstance(text, str):
-        return text  # Return the original value if it's not a string
-    stop_words = set([
-        "one", 
-        "new",
-        "New",
-        "RT", 
-        "go", 
-        "see", 
-        "say", 
-        "know", 
-        "come", 
-        "think", 
-        "make", 
-        "want",
-        "new", 
-        "via",
-        "s",
-        "u",
-        "news",
-        "rt"
-    ] + stopwords.words('english'))
-    words = text.split()
-    filtered_words = [word for word in words if word not in stop_words]
-    return ' '.join(filtered_words)

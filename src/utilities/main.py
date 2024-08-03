@@ -1,6 +1,10 @@
 import re
 import string
 from spellchecker import SpellChecker
+from unidecode import unidecode
+from nltk.stem import PorterStemmer
+import contractions
+
 
 spell = SpellChecker()
 
@@ -61,6 +65,8 @@ def remove_punctuation(text: str) -> str:
     Returns:
     str: The text with punctuation removed.
     """
+    if not isinstance(text, str):
+      return text  # Return the original value if it's not a string
     table = str.maketrans('', '', string.punctuation)
     return text.translate(table)
 
@@ -82,3 +88,118 @@ def correct_spellings(text: str) -> str:
         corrected_word = spell.correction(word) if word in misspelled_words else word
         corrected_text.append(corrected_word if corrected_word is not None else "")
     return " ".join(corrected_text)
+  
+def replace_percent20_with_space(text: str) -> str:
+    """
+    Replaces all occurrences of "%20" with a space in the given text.
+
+    Parameters:
+    text (str): The text in which "%20" will be replaced with a space.
+
+    Returns:
+    str: The text with all "%20" replaced with a space.
+    """
+    if not isinstance(text, str):
+      return text  # Return the original value if it's not a string
+    return text.replace("%20", " ")
+
+def remove_weird_content(text: str) -> str:
+    """
+    Removes weird content like Û, Ï, Ò from the given text.
+
+    Parameters:
+    text (str): The text from which weird content will be removed.
+
+    Returns:
+    str: The text with weird content removed.
+    """
+    weird_chars = ['Û', 'Ï', 'Ò']
+    for char in weird_chars:
+        text = text.replace(char, '')
+    return text
+
+def remove_accents(text: str) -> str:
+    """
+    Removes accents from the given text.
+
+    Parameters:
+    text (str): The text from which accents will be removed.
+
+    Returns:
+    str: The text with accents removed.
+    """
+    if not isinstance(text, str):
+      return text  # Return the original value if it's not a string
+    return unidecode(text)
+
+def remove_non_necessary_spaces(text: str) -> str:
+    """
+    Removes non-necessary spaces from the given text.
+
+    Parameters:
+    text (str): The text from which non-necessary spaces will be removed.
+
+    Returns:
+    str: The text with non-necessary spaces removed.
+    """
+    if not isinstance(text, str):
+      return text  # Return the original value if it's not a string
+    text = text.replace("  ", " ")  # Replace double spaces with single space
+    text = text.strip()  # Remove leading and trailing spaces
+    return text
+
+def stem_text(text: str) -> str:
+    """
+    Stems the given text using Porter Stemmer.
+
+    Parameters:
+    text (str): The text to be stemmed.
+
+    Returns:
+    str: The stemmed text.
+    """
+    stemmer = PorterStemmer()
+    words = text.split()
+    stemmed_words = [stemmer.stem(word) for word in words]
+    return ' '.join(stemmed_words)
+
+def remove_numerical_values(text: str) -> str:
+    """
+    Removes numerical values from the given text using regular expressions.
+
+    Parameters:
+    text (str): The text from which numerical values will be removed.
+
+    Returns:
+    str: The text with numerical values removed.
+    """
+    if not isinstance(text, str):
+      return text  # Return the original value if it's not a string
+    numerical_pattern = re.compile(r'\d+')
+    return numerical_pattern.sub(r'', text)
+
+def expand_contractions(text: str) -> str:
+    """
+    Expands common contractions in the given text using the contractions library.
+
+    Parameters:
+    text (str): The text to be expanded.
+
+    Returns:
+    str: The expanded text.
+    """
+    return contractions.fix(text)
+
+def remove_ampersand(text: str) -> str:
+    """
+    Removes HTML encoded ampersands from the given text.
+
+    Parameters:
+    text (str): The text from which HTML encoded ampersands will be removed.
+
+    Returns:
+    str: The text with HTML encoded ampersands removed.
+    """
+    if not isinstance(text, str):
+        return text  # Return the original value if it's not a string
+    return text.replace('amp', '')  # Remove &amp; entirely

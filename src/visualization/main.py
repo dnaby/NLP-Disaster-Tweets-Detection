@@ -26,6 +26,12 @@ stop=set(stopwords.words('english'))
 
 
 def plot_disaster_and_non_disaster_bar_distribution(raw: bool = True) -> None:
+  """
+  Plots the distribution of disaster and non-disaster tweets in the train set.
+
+  Parameters:
+  raw (bool): If True, uses the raw dataset. Otherwise, uses the processed dataset.
+  """
   train, _ = get_dataset(raw)
   # Distribution of disaster and non-disaster tweets in the train set
   train_distribution = train['target'].value_counts().reset_index()
@@ -38,6 +44,12 @@ def plot_disaster_and_non_disaster_bar_distribution(raw: bool = True) -> None:
   fig.show()
   
 def plot_disaster_and_non_disaster_pie_distribution(raw: bool = True) -> None:
+  """
+  Plots the distribution of disaster and non-disaster tweets in the train set as a pie chart.
+
+  Parameters:
+  raw (bool): If True, uses the raw dataset. Otherwise, uses the processed dataset.
+  """
   train, _ = get_dataset(raw)
   # Distribution of disaster and non-disaster tweets in the train set
   train_distribution = train['target'].value_counts().reset_index()
@@ -50,6 +62,12 @@ def plot_disaster_and_non_disaster_pie_distribution(raw: bool = True) -> None:
   fig_pie.show()
   
 def plot_tweet_length_histogram(raw: bool = True) -> None:
+  """
+  Plots the histogram of tweet lengths for disaster and non-disaster tweets.
+
+  Parameters:
+  raw (bool): If True, uses the raw dataset. Otherwise, uses the processed dataset.
+  """
   train, _ = get_dataset(raw)
   # Histogram of tweet lengths for disaster and non-disaster tweets
   train['text_length'] = train['text'].apply(len)
@@ -78,6 +96,12 @@ def plot_tweet_length_histogram(raw: bool = True) -> None:
   fig_hist.show()
   
 def plot_tweet_word_length_histogram(raw: bool = True) -> None:
+  """
+  Plots the histogram of word lengths for disaster and non-disaster tweets.
+
+  Parameters:
+  raw (bool): If True, uses the raw dataset. Otherwise, uses the processed dataset.
+  """
   train, _ = get_dataset(raw)
   # Histogram of word lengths for disaster and non-disaster tweets
   train['word_length'] = train['text'].apply(lambda x: len(x.split()))
@@ -106,6 +130,12 @@ def plot_tweet_word_length_histogram(raw: bool = True) -> None:
   fig_hist_word.show()
   
 def plot_average_word_length_for_each_tweet_histogram(raw: bool = True) -> None:
+  """
+  Plots the histogram of average word lengths for disaster and non-disaster tweets.
+
+  Parameters:
+  raw (bool): If True, uses the raw dataset. Otherwise, uses the processed dataset.
+  """
   train, _ = get_dataset(raw)
   # Calculate the average word length for each tweet
   train['avg_word_length'] = train['text'].apply(lambda x: sum(len(word) for word in x.split()) / len(x.split()))
@@ -137,6 +167,13 @@ def plot_average_word_length_for_each_tweet_histogram(raw: bool = True) -> None:
   plt.show()
   
 def plot_most_common_stopwords(raw: bool = True, top: int = 10) -> None:
+  """
+  Plots the top 'top' common stopwords in tweets.
+
+  Parameters:
+  raw (bool): If True, uses the raw dataset. Otherwise, uses the processed dataset.
+  top (int): The number of top stopwords to plot.
+  """
   # Create corpus for non-disaster tweets
   non_disaster_corpus = create_corpus(disaster=False, raw=raw)
   disaster_corpus = create_corpus(disaster=True, raw=raw)
@@ -179,6 +216,13 @@ def plot_most_common_stopwords(raw: bool = True, top: int = 10) -> None:
   fig.show()
 
 def plot_most_common_words(raw: bool = True, top: int = 10) -> None:
+  """
+  Plots the top 'top' common words in tweets (excluding stopwords).
+
+  Parameters:
+  raw (bool): If True, uses the raw dataset. Otherwise, uses the processed dataset.
+  top (int): The number of top words to plot.
+  """
   # Create corpus for non-disaster tweets
   non_disaster_corpus = create_corpus(disaster=False, raw=raw)
   disaster_corpus = create_corpus(disaster=True, raw=raw)
@@ -221,6 +265,13 @@ def plot_most_common_words(raw: bool = True, top: int = 10) -> None:
   fig.show()
 
 def plost_most_common_bigrams(raw: bool = True, top: int = 10) -> None:
+  """
+  Plots the top 'top' bigrams in tweets.
+
+  Parameters:
+  raw (bool): If True, uses the raw dataset. Otherwise, uses the processed dataset.
+  top (int): The number of top bigrams to plot.
+  """
   train, _ = get_dataset(raw)
   
   # Create corpus for disaster and non-disaster tweets
@@ -253,6 +304,13 @@ def plost_most_common_bigrams(raw: bool = True, top: int = 10) -> None:
   fig.show()
   
 def plost_most_common_trigrams(raw: bool = True, top: int = 10) -> None:
+  """
+  Plots the top 'top' trigrams in tweets.
+
+  Parameters:
+  raw (bool): If True, uses the raw dataset. Otherwise, uses the processed dataset.
+  top (int): The number of top trigrams to plot.
+  """
   train, _ = get_dataset(raw)
   
   # Create corpus for disaster and non-disaster tweets
@@ -285,6 +343,13 @@ def plost_most_common_trigrams(raw: bool = True, top: int = 10) -> None:
   fig.show()
 
 def plot_most_common_keywords(raw: bool = True, top: int = 10) -> None:
+  """
+  Plots the top 'top' keywords in tweets.
+
+  Parameters:
+  raw (bool): If True, uses the raw dataset. Otherwise, uses the processed dataset.
+  top (int): The number of top keywords to plot.
+  """
   train, _ = get_dataset(raw)
   
   # Define non_disaster_df and disaster_df
@@ -317,6 +382,13 @@ def plot_most_common_keywords(raw: bool = True, top: int = 10) -> None:
   fig.show()
 
 def plot_most_common_locations(raw: bool = True, top: int = 10) -> None:
+  """
+  Plots the top 'top' locations in tweets.
+
+  Parameters:
+  raw (bool): If True, uses the raw dataset. Otherwise, uses the processed dataset.
+  top (int): The number of top locations to plot.
+  """
   train, _ = get_dataset(raw)
   
   # Define non_disaster_df and disaster_df
@@ -349,33 +421,42 @@ def plot_most_common_locations(raw: bool = True, top: int = 10) -> None:
   fig.show()
 
 def plot_wordcloud(raw: bool = True) -> None:
-  train, _ = get_dataset(raw)
-  
-  # Define non_disaster_df and disaster_df
-  non_disaster_df = train[train['target'] == 0]
-  disaster_df = train[train['target'] == 1]
-  
-  # Generate word cloud for non-disaster tweets
-  non_disaster_text = ' '.join(non_disaster_df['text'].dropna().values)
-  non_disaster_wordcloud = WordCloud(width=800, height=400, background_color='white').generate(non_disaster_text)
+    """
+    Generates and displays word clouds for disaster and non-disaster tweets.
 
-  # Generate word cloud for disaster tweets
-  disaster_text = ' '.join(disaster_df['text'].dropna().values)
-  disaster_wordcloud = WordCloud(width=800, height=400, background_color='white').generate(disaster_text)
+    Parameters:
+    raw (bool): If True, uses the raw dataset. Otherwise, uses the processed dataset.
 
-  # Plot the word clouds
-  plt.figure(figsize=(15, 8))
+    Returns:
+    None: This function does not return any value. It displays the word clouds using matplotlib.
+    """
+    train, _ = get_dataset(raw)
+    
+    # Define non_disaster_df and disaster_df
+    non_disaster_df = train[train['target'] == 0]
+    disaster_df = train[train['target'] == 1]
+    
+    # Generate word cloud for non-disaster tweets
+    non_disaster_text = ' '.join(non_disaster_df['text'].dropna().values)
+    non_disaster_wordcloud = WordCloud(width=800, height=400, background_color='white').generate(non_disaster_text)
 
-  # Non-disaster word cloud
-  plt.subplot(1, 2, 1)
-  plt.imshow(non_disaster_wordcloud, interpolation='bilinear')
-  plt.title('Non-Disaster Tweets Word Cloud')
-  plt.axis('off')
+    # Generate word cloud for disaster tweets
+    disaster_text = ' '.join(disaster_df['text'].dropna().values)
+    disaster_wordcloud = WordCloud(width=800, height=400, background_color='white').generate(disaster_text)
 
-  # Disaster word cloud
-  plt.subplot(1, 2, 2)
-  plt.imshow(disaster_wordcloud, interpolation='bilinear')
-  plt.title('Disaster Tweets Word Cloud')
-  plt.axis('off')
+    # Plot the word clouds
+    plt.figure(figsize=(15, 8))
 
-  plt.show()
+    # Non-disaster word cloud
+    plt.subplot(1, 2, 1)
+    plt.imshow(non_disaster_wordcloud, interpolation='bilinear')
+    plt.title('Non-Disaster Tweets Word Cloud')
+    plt.axis('off')
+
+    # Disaster word cloud
+    plt.subplot(1, 2, 2)
+    plt.imshow(disaster_wordcloud, interpolation='bilinear')
+    plt.title('Disaster Tweets Word Cloud')
+    plt.axis('off')
+
+    plt.show()

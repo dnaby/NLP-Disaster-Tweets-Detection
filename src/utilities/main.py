@@ -1,12 +1,23 @@
+import contractions
+import nltk
+from nltk.corpus import stopwords as nltk_stopwords
+from nltk.stem import PorterStemmer
+
+
 import re
 import string
+import spacy
 from spellchecker import SpellChecker
 from unidecode import unidecode
-from nltk.stem import PorterStemmer
-import contractions
 
 
+nltk.download('stopwords')
+nltk.download('punkt')
+nlp = spacy.load("en_core_web_sm")
 spell = SpellChecker()
+
+
+
 
 def remove_URL(text: str) -> str:
     """
@@ -100,7 +111,7 @@ def replace_percent20_with_space(text: str) -> str:
     str: The text with all "%20" replaced with a space.
     """
     if not isinstance(text, str):
-      return text  # Return the original value if it's not a string
+        return text  # Return the original value if it's not a string
     return text.replace("%20", " ")
 
 def remove_weird_content(text: str) -> str:
@@ -129,7 +140,7 @@ def remove_accents(text: str) -> str:
     str: The text with accents removed.
     """
     if not isinstance(text, str):
-      return text  # Return the original value if it's not a string
+        return text  # Return the original value if it's not a string
     return unidecode(text)
 
 def remove_non_necessary_spaces(text: str) -> str:
@@ -162,6 +173,20 @@ def stem_text(text: str) -> str:
     words = text.split()
     stemmed_words = [stemmer.stem(word) for word in words]
     return ' '.join(stemmed_words)
+
+def remove_stopwords(text: str) -> str:
+    if not isinstance(text, str):
+        return text
+    else:
+        our_stopwords = ["amp", "https", "one", "new", "go", "see","say","know","come","think","make","want","new","via","s","u","news","rt", "im"]
+        stopwords = our_stopwords + nltk_stopwords.words('english')
+
+        text = text.lower()
+        # Remove stopwords
+        cleaned_text = " ".join([word for word in text.split() if word not in stopwords])
+    
+        return cleaned_text
+
 
 def remove_numerical_values(text: str) -> str:
     """
@@ -203,3 +228,4 @@ def remove_ampersand(text: str) -> str:
     if not isinstance(text, str):
         return text  # Return the original value if it's not a string
     return text.replace('amp', '')  # Remove &amp; entirely
+

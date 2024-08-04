@@ -22,23 +22,27 @@ from wordcloud import WordCloud
 
 plt.style.use('ggplot')
 stop=set([
-  "one", 
-  "new", 
-  "go", 
-  "see", 
-  "say", 
-  "know", 
-  "come", 
-  "think", 
-  "make", 
-  "want",
-  "new", 
-  "via",
-  "s",
-  "u",
-  "news",
-  "rt"
-  ] + stopwords.words('english'))
+    "one", 
+    "new",
+    "New",
+    "RT", 
+    "go", 
+    "see", 
+    "say", 
+    "know", 
+    "come", 
+    "think", 
+    "make", 
+    "want",
+    "new", 
+    "via",
+    "s",
+    "u",
+    "news",
+    "rt",
+    "look",
+    "US"
+] + stopwords.words('english'))
 
 
 def plot_disaster_and_non_disaster_bar_distribution(raw: bool = True) -> None:

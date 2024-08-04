@@ -236,24 +236,26 @@ def remove_stop_words(text: str) -> str:
     if not isinstance(text, str):
         return text  # Return the original value if it's not a string
     stop_words = set([
-        "one", 
-        "new",
-        "New",
-        "RT", 
-        "go", 
-        "see", 
-        "say", 
-        "know", 
-        "come", 
-        "think", 
-        "make", 
-        "want",
-        "new", 
-        "via",
-        "s",
-        "u",
-        "news",
-        "rt"
+      "one", 
+      "new",
+      "New",
+      "RT", 
+      "go", 
+      "see", 
+      "say", 
+      "know", 
+      "come", 
+      "think", 
+      "make", 
+      "want",
+      "new", 
+      "via",
+      "s",
+      "u",
+      "news",
+      "rt",
+      "look",
+      "US"
     ] + stopwords.words('english'))
     words = text.split()
     filtered_words = [word for word in words if word not in stop_words]

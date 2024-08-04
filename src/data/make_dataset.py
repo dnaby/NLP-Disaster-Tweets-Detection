@@ -17,23 +17,27 @@ def get_dataset(raw: bool = True) -> Tuple[pd.DataFrame, pd.DataFrame]:
         pd.read_csv(f"../data/{'raw' if raw else 'processed'}/test.csv")
     )
 
-def create_corpus(disaster: bool = True, raw: bool = True) -> List[str]:
+def create_corpus(disaster: bool, raw: bool) -> list:
     """
-    Creates a corpus of words from the 'text' column of the train dataset based on the 'disaster' parameter.
+    Creates a corpus of words from the tweets.
 
     Parameters:
-    disaster (bool): If True, selects rows where 'target' is 1. Otherwise, selects rows where 'target' is 0.
+    disaster (bool): If True, creates corpus for disaster tweets. Otherwise, for non-disaster tweets.
     raw (bool): If True, uses the raw dataset. Otherwise, uses the processed dataset.
 
     Returns:
-    List[str]: A list of words from the 'text' column.
+    list: A list of words from the tweets.
     """
+    # Load the dataset
     train, _ = get_dataset(raw)
+    
     corpus = []
     
-    for x in train[train['target'] == int(disaster)]['text'].str.split():
+    # Filter out NaN values and create corpus
+    for x in train[train['target'] == int(disaster)]['text'].dropna().str.split():
         for i in x:
             corpus.append(i)
+    
     return corpus
 
 def get_top_tweet_bigrams(corpus: List[str], top: int = 10) -> List[Tuple[str, int]]:

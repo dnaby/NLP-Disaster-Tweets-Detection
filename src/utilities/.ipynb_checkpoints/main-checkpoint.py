@@ -1,23 +1,12 @@
-import contractions
-import nltk
-from nltk.corpus import stopwords
-from nltk.stem import PorterStemmer
-
-
 import re
 import string
-import spacy
 from spellchecker import SpellChecker
 from unidecode import unidecode
+from nltk.stem import PorterStemmer
+import contractions
 
 
-nltk.download('stopwords')
-nltk.download('punkt')
-nlp = spacy.load("en_core_web_sm")
 spell = SpellChecker()
-
-
-
 
 def remove_URL(text: str) -> str:
     """
@@ -77,7 +66,7 @@ def remove_punctuation(text: str) -> str:
     str: The text with punctuation removed.
     """
     if not isinstance(text, str):
-        return text  # Return the original value if it's not a string
+      return text  # Return the original value if it's not a string
     table = str.maketrans('', '', string.punctuation)
     return text.translate(table)
 
@@ -99,7 +88,7 @@ def correct_spellings(text: str) -> str:
         corrected_word = spell.correction(word) if word in misspelled_words else word
         corrected_text.append(corrected_word if corrected_word is not None else "")
     return " ".join(corrected_text)
-
+  
 def replace_percent20_with_space(text: str) -> str:
     """
     Replaces all occurrences of "%20" with a space in the given text.
@@ -111,7 +100,7 @@ def replace_percent20_with_space(text: str) -> str:
     str: The text with all "%20" replaced with a space.
     """
     if not isinstance(text, str):
-        return text  # Return the original value if it's not a string
+      return text  # Return the original value if it's not a string
     return text.replace("%20", " ")
 
 def remove_weird_content(text: str) -> str:
@@ -140,7 +129,7 @@ def remove_accents(text: str) -> str:
     str: The text with accents removed.
     """
     if not isinstance(text, str):
-        return text  # Return the original value if it's not a string
+      return text  # Return the original value if it's not a string
     return unidecode(text)
 
 def remove_non_necessary_spaces(text: str) -> str:
@@ -173,7 +162,6 @@ def stem_text(text: str) -> str:
     words = text.split()
     stemmed_words = [stemmer.stem(word) for word in words]
     return ' '.join(stemmed_words)
-
 
 def remove_numerical_values(text: str) -> str:
     """
@@ -215,57 +203,3 @@ def remove_ampersand(text: str) -> str:
     if not isinstance(text, str):
         return text  # Return the original value if it's not a string
     return text.replace('amp', '')  # Remove &amp; entirely
-
-def lemmatize_text(text: str) -> str:
-    """
-    Lemmatizes the given text using the Spacy library.
-
-    Parameters:
-    text (str): The text to be lemmatized.
-
-    Returns:
-    str: The lemmatized text.
-    """
-    if not isinstance(text, str):
-        return text  # Return the original value if it's not a string
-    doc = nlp(text)
-    lemmatized_text = ' '.join([token.lemma_ for token in doc])
-    return lemmatized_text
-
-def remove_stopwords(text: str) -> str:
-    """
-    Removes stop words from the given text.
-
-    Parameters:
-    text (str): The text from which stop words will be removed.
-
-    Returns:
-    str: The text with stop words removed.
-    """
-    if not isinstance(text, str):
-        return text  # Return the original value if it's not a string
-    stop_words = set([
-      "one", 
-      "new",
-      "New",
-      "RT", 
-      "go", 
-      "see", 
-      "say", 
-      "know", 
-      "come", 
-      "think", 
-      "make", 
-      "want",
-      "new", 
-      "via",
-      "s",
-      "u",
-      "news",
-      "rt",
-      "look",
-      "US"
-    ] + stopwords.words('english'))
-    words = text.split()
-    filtered_words = [word for word in words if word not in stop_words]
-    return ' '.join(filtered_words)

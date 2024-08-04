@@ -456,11 +456,20 @@ def plot_wordcloud(raw: bool = True) -> None:
     
     # Generate word cloud for non-disaster tweets
     non_disaster_text = ' '.join(non_disaster_df['text'].dropna().values)
-    non_disaster_wordcloud = WordCloud(width=800, height=400, background_color='white').generate(non_disaster_text)
+    non_disaster_wordcloud = WordCloud(
+      width=800, 
+      height=400, 
+      #background_color='white', 
+      colormap='tab20c',
+      collocations=True).generate(non_disaster_text)
 
     # Generate word cloud for disaster tweets
     disaster_text = ' '.join(disaster_df['text'].dropna().values)
-    disaster_wordcloud = WordCloud(width=800, height=400, background_color='white').generate(disaster_text)
+    disaster_wordcloud = WordCloud(
+      width=800, 
+      height=400, 
+      colormap='tab20c',
+      collocations=True).generate(disaster_text)
 
     # Plot the word clouds
     plt.figure(figsize=(15, 8))

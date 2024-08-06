@@ -2,6 +2,7 @@ import contractions
 import nltk
 from nltk.corpus import stopwords
 from nltk.stem import PorterStemmer
+import os
 
 
 import re
@@ -21,14 +22,22 @@ spell = SpellChecker()
 
 
 # Read slang definitions from the file
+# Define the absolute path to the slang.txt file
+base_dir = os.path.dirname(os.path.abspath(__file__))
+slang_file_path = os.path.join(base_dir, 'slang.txt')
+
+# Initialize slang_dict with the content of the file
 slang_dict = {}
-with open('../src/utilities/slang.txt', 'r') as file:
-    for line in file:
-        # Split the line into abbreviation and meaning
-        slang, meaning = line.strip().split('=', 1) if '=' in line.strip() else (line.strip(), '')   
-        slang = slang.lower()
-        meaning = meaning.lower()     
-        slang_dict[slang] = meaning
+if os.path.isfile(slang_file_path):
+    with open(slang_file_path, 'r') as file:
+        for line in file:
+            slang, meaning = line.strip().split('=', 1) if '=' in line.strip() else (line.strip(), '')   
+            slang = slang.lower()
+            meaning = meaning.lower()     
+            slang_dict[slang] = meaning
+else:
+    raise FileNotFoundError(f"The file {slang_file_path} does not exist.")
+
 
 def expand_slangs(text: str) -> str:
     text = text.lower()

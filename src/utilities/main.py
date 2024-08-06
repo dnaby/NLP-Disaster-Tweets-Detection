@@ -9,6 +9,7 @@ import string
 import spacy
 from spellchecker import SpellChecker
 from unidecode import unidecode
+import wordninja
 
 
 nltk.download('stopwords')
@@ -266,6 +267,11 @@ def remove_stopwords(text: str) -> str:
       "look",
       "US"
     ] + stopwords.words('english'))
+    text = text.lower()
     words = text.split()
     filtered_words = [word for word in words if word not in stop_words]
     return ' '.join(filtered_words)
+
+def expand_glued_text(text: str) -> str:
+    text = " ".join(wordninja.split(text))
+    return text

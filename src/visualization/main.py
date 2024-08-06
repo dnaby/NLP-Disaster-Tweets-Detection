@@ -22,26 +22,28 @@ from wordcloud import WordCloud
 
 plt.style.use('ggplot')
 stop=set([
-    "one", 
-    "new",
-    "New",
-    "RT", 
-    "go", 
-    "see", 
-    "say", 
-    "know", 
-    "come", 
-    "think", 
-    "make", 
-    "want",
-    "new", 
-    "via",
-    "s",
-    "u",
-    "news",
-    "rt",
-    "look",
-    "US"
+  "one", 
+  "new", "New", "NEW",
+  "news", "News", "NEWS",
+  "people", "People", "PEOPLE",
+  "RT", 
+  "go", "GO", "Go", "gO",
+  "S", "a$", "?",
+  "today",
+  "year",
+  "see", 
+  "say", 
+  "know", 
+  "come", 
+  "think", 
+  "make", 
+  "want",
+  "via",
+  "s",
+  "u",
+  "rt",
+  "look",
+  "US"
 ] + stopwords.words('english'))
 
 

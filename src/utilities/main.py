@@ -2,6 +2,7 @@ import contractions
 import nltk
 from nltk.corpus import stopwords
 from nltk.stem import PorterStemmer
+import os
 
 
 import re
@@ -9,15 +10,49 @@ import string
 import spacy
 from spellchecker import SpellChecker
 from unidecode import unidecode
+import wordninja
 
 
 nltk.download('stopwords')
 nltk.download('punkt')
+nltk.download('words')
+words = set(nltk.corpus.words.words())
 nlp = spacy.load("en_core_web_sm")
 spell = SpellChecker()
 
 
+# Read slang definitions from the file
+# Define the absolute path to the slang.txt file
+base_dir = os.path.dirname(os.path.abspath(__file__))
+slang_file_path = os.path.join(base_dir, 'slang.txt')
 
+# Initialize slang_dict with the content of the file
+slang_dict = {}
+if os.path.isfile(slang_file_path):
+    with open(slang_file_path, 'r') as file:
+        for line in file:
+            slang, meaning = line.strip().split('=', 1) if '=' in line.strip() else (line.strip(), '')   
+            slang = slang.lower()
+            meaning = meaning.lower()     
+            slang_dict[slang] = meaning
+else:
+    raise FileNotFoundError(f"The file {slang_file_path} does not exist.")
+
+
+def expand_slangs(text: str) -> str:
+    text = text.lower()
+    words = text.split()
+    expanded_words = [slang_dict.get(word.lower(), word.lower()) for word in words]
+    return ' '.join(expanded_words)
+
+def remove_unknown_words(text: str) -> str:
+    if not isinstance(text, str):
+      return text  # Return the original value if it's not a string
+    return " ".join(w for w in nltk.wordpunct_tokenize(text) \
+         if w.lower() in words or not w.isalpha())
+    
+def remove_single_chars(text):
+    return ' '.join(word for word in text.split() if len(word) > 1)
 
 def remove_URL(text: str) -> str:
     """
@@ -78,7 +113,7 @@ def remove_punctuation(text: str) -> str:
     """
     if not isinstance(text, str):
         return text  # Return the original value if it's not a string
-    table = str.maketrans('', '', string.punctuation)
+    table = str.maketrans(string.punctuation, ' ' * len(string.punctuation))
     return text.translate(table)
 
 def correct_spellings(text: str) -> str:
@@ -124,9 +159,19 @@ def remove_weird_content(text: str) -> str:
     Returns:
     str: The text with weird content removed.
     """
+<<<<<<< HEAD
     if not isinstance(text, str):
       return text  # Return the original value if it's not a string
     weird_chars = ['Û', 'Ï', 'Ò', '¢']
+=======
+    weird_chars = [
+    'Á', 'á', 'É', 'é', 'Í', 'í', 'Ó', 'ó', 'Ú', 'ú',
+    'À', 'à', 'È', 'è', 'Ì', 'ì', 'Ò', 'ò', 'Ù', 'ù',
+    'Â', 'â', 'Ê', 'ê', 'Î', 'î', 'Ô', 'ô', 'Û', 'û',
+    'Ä', 'ä', 'Ë', 'ë', 'Ï', 'ï', 'Ö', 'ö', 'Ü', 'ü', 'Ÿ', 'ÿ',
+    'Ã', 'ã', 'Ñ', 'ñ', 'Õ', 'õ'
+]
+>>>>>>> main
     for char in weird_chars:
         text = text.replace(char, '')
     return text
@@ -176,6 +221,15 @@ def stem_text(text: str) -> str:
     stemmed_words = [stemmer.stem(word) for word in words]
     return ' '.join(stemmed_words)
 
+# Define the function to check for more than twice-repeated letters
+def has_lengthening(text: str) -> bool:
+    pattern = re.compile(r"(.)\1{2,}")
+    return bool(pattern.search(text))
+
+def reduce_lengthening(text :str) -> str :
+    pattern = re.compile(r"(.)\1{2,}")
+    return pattern.sub(r"\1\1", text)
+
 
 def remove_numerical_values(text: str) -> str:
     """
@@ -216,7 +270,7 @@ def remove_ampersand(text: str) -> str:
     """
     if not isinstance(text, str):
         return text  # Return the original value if it's not a string
-    return text.replace('amp', '')  # Remove &amp; entirely
+    return text.replace('&amp', '')  # Remove &amp; entirely
 
 def lemmatize_text(text: str) -> str:
     """
@@ -269,12 +323,20 @@ def remove_stopwords(text: str) -> str:
       "u",
       "rt",
       "look",
+<<<<<<< HEAD
       "US"
   ] + stopwords.words('english'))
+=======
+      "US",
+      "people"
+    ] + stopwords.words('english'))
+    text = text.lower()
+>>>>>>> main
     words = text.split()
     filtered_words = [word for word in words if word not in stop_words]
     return ' '.join(filtered_words)
 
+<<<<<<< HEAD
 def clean(tweet): 
             
     # Special characters
@@ -1026,3 +1088,8 @@ def clean(tweet):
     tweet = re.sub(r"SOUDELOR", "Soudelor", tweet)
     
     return tweet
+=======
+def expand_glued_text(text: str) -> str:
+    text = " ".join(wordninja.split(text))
+    return text
+>>>>>>> main

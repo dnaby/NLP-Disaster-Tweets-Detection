@@ -1,10 +1,13 @@
 """Project parameters."""
 
 MODEL_PARAMS = {
-    "TARGET_NAME": "target",
-    "MIN_PPS": 0.10,  # Minimal value for Predictive Power Score (PPS)
-
+  'TARGET_NAME': 'target',
+  'DEFAULT_FEATURE_NAMES': [
+    'keyword',
+    'location',
+    'text',
+  ],
+  'TEST_SIZE': 0.20
 }
 
-# random seed
-SEED = 42
+SEED = 39

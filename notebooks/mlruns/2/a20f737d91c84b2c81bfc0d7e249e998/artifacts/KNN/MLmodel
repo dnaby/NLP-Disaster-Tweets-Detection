@@ -1,0 +1,29 @@
+artifact_path: KNN
+flavors:
+  python_function:
+    env:
+      conda: conda.yaml
+      virtualenv: python_env.yaml
+    loader_module: mlflow.sklearn
+    model_path: model.pkl
+    predict_fn: predict
+    python_version: 3.11.9
+  sklearn:
+    code: null
+    pickled_model: model.pkl
+    serialization_format: cloudpickle
+    sklearn_version: 1.4.2
+mlflow_version: 2.15.0
+model_size_bytes: 2635344
+model_uuid: 96386d24fc62497dac4180af16feecea
+run_id: a20f737d91c84b2c81bfc0d7e249e998
+saved_input_example_info:
+  artifact_path: input_example.json
+  format: tf-serving
+  serving_input_path: serving_input_payload.json
+  type: ndarray
+signature:
+  inputs: '[{"type": "tensor", "tensor-spec": {"dtype": "float32", "shape": [-1, 100]}}]'
+  outputs: '[{"type": "tensor", "tensor-spec": {"dtype": "int64", "shape": [-1]}}]'
+  params: null
+utc_time_created: '2024-08-05 17:12:15.311973'

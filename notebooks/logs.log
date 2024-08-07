@@ -2366,6 +2366,7 @@ Alternately, you can install this by running `pip install pycaret[models]`
 2024-08-06 17:55:01,254:INFO:Linear Discriminant Analysis Imported successfully
 2024-08-06 17:55:01,266:INFO:Starting cross validation
 2024-08-06 17:55:01,295:INFO:Cross validating with StratifiedKFold(n_splits=10, random_state=None, shuffle=False), n_jobs=-1
+<<<<<<< HEAD
 2024-08-06 18:08:28,167:WARNING:
 'cuml' is a soft dependency and not included in the pycaret installation. Please run: `pip install cuml` to install.
 2024-08-06 18:08:28,168:WARNING:
@@ -2867,3 +2868,5 @@ Alternately, you can install this by running `pip install pycaret[models]`
 'cuml' is a soft dependency and not included in the pycaret installation. Please run: `pip install cuml` to install.
 2024-08-06 20:18:40,714:WARNING:
 'cuml' is a soft dependency and not included in the pycaret installation. Please run: `pip install cuml` to install.
+=======
+>>>>>>> f97fe9b4babf846cdbcb816154a2af1ef34ea05f

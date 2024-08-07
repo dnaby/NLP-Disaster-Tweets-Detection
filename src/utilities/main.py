@@ -159,11 +159,9 @@ def remove_weird_content(text: str) -> str:
     Returns:
     str: The text with weird content removed.
     """
-<<<<<<< HEAD
     if not isinstance(text, str):
       return text  # Return the original value if it's not a string
     weird_chars = ['Û', 'Ï', 'Ò', '¢']
-=======
     weird_chars = [
     'Á', 'á', 'É', 'é', 'Í', 'í', 'Ó', 'ó', 'Ú', 'ú',
     'À', 'à', 'È', 'è', 'Ì', 'ì', 'Ò', 'ò', 'Ù', 'ù',
@@ -171,7 +169,6 @@ def remove_weird_content(text: str) -> str:
     'Ä', 'ä', 'Ë', 'ë', 'Ï', 'ï', 'Ö', 'ö', 'Ü', 'ü', 'Ÿ', 'ÿ',
     'Ã', 'ã', 'Ñ', 'ñ', 'Õ', 'õ'
 ]
->>>>>>> main
     for char in weird_chars:
         text = text.replace(char, '')
     return text
@@ -323,20 +320,13 @@ def remove_stopwords(text: str) -> str:
       "u",
       "rt",
       "look",
-<<<<<<< HEAD
       "US"
-  ] + stopwords.words('english'))
-=======
-      "US",
-      "people"
     ] + stopwords.words('english'))
     text = text.lower()
->>>>>>> main
     words = text.split()
     filtered_words = [word for word in words if word not in stop_words]
     return ' '.join(filtered_words)
 
-<<<<<<< HEAD
 def clean(tweet): 
             
     # Special characters
@@ -1088,8 +1078,6 @@ def clean(tweet):
     tweet = re.sub(r"SOUDELOR", "Soudelor", tweet)
     
     return tweet
-=======
 def expand_glued_text(text: str) -> str:
     text = " ".join(wordninja.split(text))
     return text
->>>>>>> main

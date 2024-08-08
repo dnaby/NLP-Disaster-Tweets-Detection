@@ -1,13 +1,40 @@
+# Ajouter le répertoire parent pour les imports de module
+import sys
+sys.path.append('..')
+
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 import requests
 import pickle
 import numpy as np
+
 from tensorflow.keras.preprocessing.text import Tokenizer
 from tensorflow.keras.preprocessing.sequence import pad_sequences
+from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
+
 from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
 
+from sklearn.metrics import classification_report, confusion_matrix
+import dagshub
+import mlflow
+import matplotlib.pyplot as plt
+import seaborn as sns
+from datetime import datetime
+from src.models.main import (
+  read_and_split_data
+)
 
+# Initialize DagsHub and MLflow
+dagshub.init(repo_owner='dnaby', repo_name='NLP-Disaster-Tweets-Detection', mlflow=True)
+
+logged_model = 'runs:/f0d16e0cafa54483830c0d104cb3d58a/model'
+# Load model as a PyFuncModel.
+loaded_model = mlflow.pyfunc.load_model(logged_model)
+
+x_train, _, _, _, _ = read_and_split_data()
+
+tokenizer = Tokenizer(num_words=2000)
+tokenizer.fit_on_texts(x_train)
 
 # Define the FastAPI app
 app = FastAPI()
@@ -19,35 +46,14 @@ def format_response(response: str) -> dict:
 class ModelInput(BaseModel):
     text: object
 
-
-# Load the model 
-def load_model(path: str):
-    try:
-        with open(path, 'rb') as f:
-            model = pickle.load(f)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error loading model: {str(e)}")
-    return model
-
-# Path to your model file
-model_path = r"notebooks\mlruns\1\3ff080f0cf984f4daa3b210ad8d2cdad\artifacts\KNN\model.pkl"
-# Load the model
-model = load_model(model_path)
+@app.get("/")
+def read_root():
+    return {"Hello": "World"}
 
 @app.post("/predict")
 def predict(input: ModelInput):
     try:
-        tfidf = TfidfVectorizer()
-        # tokenizer = Tokenizer(num_words=2000)
-        # tokenizer.fit_on_texts(input.text)
-        # input.text = tokenizer.texts_to_sequences(input.text)
-        # input.text = pad_sequences(input.text, maxlen=100)
-        
-        # Transform the input text using the loaded vectorizer
-        X = tfidf.fit_transform([input.text]).toarray()
-        
-        # data = np.array(input.text).reshape(1, -1)  # Reshape data for prediction
-        prediction = model.predict(X)
+        prediction = loaded_model.predict(pad_sequences(tokenizer.texts_to_sequences([input.text]), maxlen=10))
         return {"prediction": prediction.tolist()}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

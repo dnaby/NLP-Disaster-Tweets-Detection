@@ -21,6 +21,8 @@ Here is a preview of the dataset:
 
 ## Exploratory Data Analysis (EDA)
 
+Please click on this link to visualize the notebook with the different schemas for the EDA part on Colab: [EDA Notebook](https://drive.google.com/file/d/1MC0pyW-x7OVeTMwYqDDIkS6SGv29bL0F/view?usp=sharing)
+
 ### Noisy Word Cloud
 
 Before preprocessing the tweets, a noisy word cloud is generated to visualize the most common words in the raw dataset. This helps in understanding the initial state of the data and identifying any noise or irrelevant information.

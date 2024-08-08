@@ -94,7 +94,7 @@ def plot_training_history(history):
 
 def plot_confusion_matrix(y_val, y_pred):
     cm = confusion_matrix(y_val, y_pred)
-    disp = ConfusionMatrixDisplay(confusion_matrix=cm)
+    disp = ConfusionMatrixDisplay(confusion_matrix=confusion_matrix)
     disp.plot()
 
     plt.title('Confusion Matrix')
